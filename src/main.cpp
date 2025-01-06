@@ -9,6 +9,8 @@
 
 String influxBlePayload = "";
 bool connected;
+time_t now;
+time_t unixtime_last_success;
 
 void setup() {
   Serial.begin(9600);
@@ -25,9 +27,20 @@ void setup() {
   Serial.println(time);
   set_time(time);
   set_vibration_weak();
+
+  // initialize restart counters
+  now = get_unixtime();
+  unixtime_last_success = now;
 }
 
 void loop() {
+  now = get_unixtime();
+  long diffInSeconds = now - unixtime_last_success;
+  if (diffInSeconds > 30) {
+    // restart in case of inactivity/errors
+    ESP.restart();
+  }
+
   if (connected && is_wifi_connected()) {
 
     struct tm timeinfo = get_time_raw();
@@ -41,6 +54,7 @@ void loop() {
       bool success = sendToInflux(influxBlePayload);
       if (success) {
         set_influx_payload("");
+        unixtime_last_success = now;
       }
     } else {
       request_data();

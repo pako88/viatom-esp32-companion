@@ -28,6 +28,10 @@ struct tm get_time_raw() {
   return timeinfo;
 }
 
+time_t get_unixtime() {
+  return time(NULL); // Get current Unix time
+}
+
 bool is_time_available() {
     return time_available;
 }
