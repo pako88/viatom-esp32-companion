@@ -6,6 +6,7 @@
 #include "alarm.h"
 
 #include <Arduino.h>
+#include <esp_task_wdt.h>
 
 String influxBlePayload = "";
 bool connected;
@@ -31,9 +32,16 @@ void setup() {
   // initialize restart counters
   now = get_unixtime();
   unixtime_last_success = now;
+
+  // Initialize the watchdog timer
+  esp_task_wdt_init(30, true); // Set 30 seconds timeout and reset the system on timeout
+  esp_task_wdt_add(NULL); // Add the current task (main loop) to the watchdog
 }
 
 void loop() {
+  // Reset the watchdog timer to prevent a reset
+  esp_task_wdt_reset();
+
   now = get_unixtime();
   long diffInSeconds = now - unixtime_last_success;
   if (diffInSeconds > 30) {
