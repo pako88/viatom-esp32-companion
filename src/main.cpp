@@ -39,8 +39,6 @@ void setup() {
 }
 
 void loop() {
-  // Reset the watchdog timer to prevent a reset
-  esp_task_wdt_reset();
 
   now = get_unixtime();
   long diffInSeconds = now - unixtime_last_success;
@@ -50,6 +48,8 @@ void loop() {
   }
 
   if (connected && is_wifi_connected()) {
+    // Reset the watchdog timer to prevent a reset
+    esp_task_wdt_reset();
 
     struct tm timeinfo = get_time_raw();
     if (trigger_alarm(&timeinfo) && is_device_worn()) {
