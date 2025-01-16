@@ -23,7 +23,7 @@ bool sendToInflux(String payload) {
     
     // Check for a successful response
     bool success;
-    if (httpCode > 0) {
+    if (httpCode == 204) {
       Serial.println("HTTP GET request sent successfully. Response code: " + String(httpCode));
       success = true;
     } else {
