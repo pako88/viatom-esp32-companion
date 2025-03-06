@@ -2,14 +2,9 @@
 
 #include <Arduino.h>
 
-bool trigger_alarm(struct tm * timeinfo) {
+bool trigger_alarm(struct tm * timeinfo, int start_time_hour, int start_time_minute, int stop_time_hour, int stop_time_minute) {
     // time can't be configured across multiple hours currently. Alarm has to stop at the full hour. (e.g. 5:50 - 6:10 doesn't work)
     
-    int start_time_hour = 5;
-    int start_time_minute = 50;
-    int stop_time_hour = 6;
-    int stop_time_minute = 0;
-
     bool check_hour;
     if (start_time_hour == stop_time_hour) {
         check_hour = timeinfo->tm_hour >= start_time_hour;

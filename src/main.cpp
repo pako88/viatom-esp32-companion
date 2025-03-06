@@ -25,7 +25,11 @@ void setup() {
   Serial.print("Set date and time on ring: ");
   Serial.println(time);
   set_time(time);
-  set_vibration_weak();
+
+  struct tm timeinfo = get_time_raw();
+  if (trigger_alarm(&timeinfo, 20, 0, 23, 30)) {
+    set_vibration_weak();
+  }
 
   // Initialize the watchdog timer
   esp_task_wdt_init(30, true); // Set 30 seconds timeout and reset the system on timeout
@@ -35,7 +39,7 @@ void setup() {
 void loop() {
   if (connected && is_wifi_connected()) {
     struct tm timeinfo = get_time_raw();
-    if (trigger_alarm(&timeinfo) && is_device_worn()) {
+    if (trigger_alarm(&timeinfo, 5, 50, 6, 0) && is_device_worn()) {
       Serial.println("ALARM!");
       set_vibration_weak();
     }
